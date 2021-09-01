@@ -1,0 +1,61 @@
+export class SignupComponent implements OnInit {
+
+  i:any=0;
+  users:any; 
+  lastUpdate:any=0;
+
+  userForm!: FormGroup;
+
+  constructor(private http:HttpClient) { 
+    this.http.get('http://localhost:8080/api/').subscribe(data=>
+    {
+      console.log(data);
+      this.users=data;
+      console.log(this.users[0].firstName);
+      console.log(this.users.length);      
+    })
+
+  }
+  ngOnInit(): void {
+    this.userForm = new FormGroup({
+      id: new FormControl(),
+      firstName: new FormControl(),
+      lasttName: new FormControl(),
+      age: new FormControl(),
+      country: new FormControl()
+    });
+  }
+  update(form :any )
+  {
+
+    this.http.put('http://localhost:8080/api/update',form).subscribe((data)=>
+    {
+      this.lastUpdate=form.id;
+      console.log("update!!!")
+    },error=>
+    {
+     console.log(error.message)
+    }
+    )
+    
+    
+  }
+}
+
+code html :
+  <form [formGroup]="userForm"  *ngFor="let items of users " >
+    <input type ="number"  formControlName="id" placeholder="     {{items.id}}" >
+    <input type ="text"    formControlName="firstName"  placeholder="{{items.firstName}}" >
+    <input type ="text"  formControlName="lasttName"  placeholder={{items.lasttName}}>
+    <input type ="number"  formControlName="age"  placeholder="{{items.age}}">
+    <input type ="text"  formControlName="country"   placeholder={{items.country}}>
+    <button type="submit" class="btn btn-success">Update</button>
+    <div *ngIf=" lastUpdate == items.id" >
+        <div class="alert alert-success d-flex align-items-center" role="alert"  >
+        <strong>Update success !!</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    </div> 
+  </form>
+
+https://www.youtube.com/watch?v=7DzdebaSgxg
